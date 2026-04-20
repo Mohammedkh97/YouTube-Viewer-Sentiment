@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/LightGBM-Classifier-brightgreen?style=for-the-badge&logo=leaflet&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Flask-REST%20API-black?style=for-the-badge&logo=flask&logoColor=white"/>
+  <img src="https://img.shields.io/badge/FastAPI-REST%20API-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
   <img src="https://img.shields.io/badge/MLflow-Tracking-blue?style=for-the-badge&logo=mlflow&logoColor=white"/>
   <img src="https://img.shields.io/badge/DVC-Pipeline-945DD6?style=for-the-badge&logo=dvc&logoColor=white"/>
   <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <b>An end-to-end production-grade ML system that classifies YouTube comments into Positive, Neutral, and Negative sentiments — powered by LightGBM, TF-IDF, Flask, and a Chrome Extension UI.</b>
+  <b>An end-to-end production-grade ML system that classifies YouTube comments into Positive, Neutral, and Negative sentiments — powered by LightGBM, TF-IDF, FastAPI, and a React UI.</b>
 </p>
 
 ---
@@ -38,8 +38,8 @@
 
 - 🔬 **A rigorous ML experimentation pipeline** — 8 experiments across Bag-of-Words, TF-IDF, XGBoost, and LightGBM models with hyperparameter tuning
 - ⚙️ **A reproducible DVC pipeline** — from raw data ingestion → preprocessing → model training → evaluation → registration
-- 🌐 **A Flask REST API** — serving predictions, word clouds, pie charts, and sentiment trend graphs
-- 🧩 **A Chrome Extension** — letting users analyze any YouTube video's comment section directly from their browser
+- 🌐 **A FastAPI REST API** — serving predictions, word clouds, pie charts, and sentiment trend graphs
+- 🧩 **A React Frontend UI & Chrome Extension** — visually aesthetic frontend for users to analyze YouTube comments directly
 - ☁️ **Full AWS deployment** — containerized with Docker, stored in ECR, deployed on EC2, with automated CI/CD via GitHub Actions
 
 ---
@@ -56,8 +56,8 @@ YouTube Comments (via YouTube Data API v3)
              │  HTTP POST
              ▼
 ┌─────────────────────────┐
-│     Flask REST API      │  ← Preprocessing · Prediction · Visualization
-│   (app.py / flask_app)  │
+│     FastAPI REST API    │  ← Preprocessing · Prediction · Visualization
+│  (backend/main.py)      │
 └────────────┬────────────┘
              │
              ▼
@@ -104,14 +104,15 @@ YouTube-Viewer-Sentiment/
 │       ├── model_evaluation.py        # MLflow logging, confusion matrix
 │       └── register_model.py          # Pushes model to MLflow registry
 │
-├── flask_app/
-│   └── app.py                         # Standalone Flask app (for Docker)
-├── app.py                             # Root Flask entry point
+├── backend/
+│   ├── main.py                        # FastAPI entry point
+│   └── Dockerfile                     # Container definition for the backend
 │
-├── yt-chrome-plugin-frontend/
-│   ├── manifest.json                  # Chrome extension manifest
-│   ├── popup.html                     # Extension UI
-│   └── popup.js                       # Fetches YouTube comments & calls API
+├── frontend/
+│   ├── src/                           # React Vite frontend
+│   └── Dockerfile                     # Nginx container for React
+│
+├── yt-chrome-plugin-frontend/         # Legacy Chrome extension
 │
 ├── notebooks/                         # 8 experiment notebooks (EDA → LightGBM HPT)
 ├── dvc.yaml                           # DVC pipeline definition
@@ -157,12 +158,15 @@ dvc repro       # Reproduces the full pipeline end-to-end
 dvc dag         # Visualize the pipeline DAG
 ```
 
-### 5. Start the Flask API
+### 5. Start the Application
 
+You can now start the entire application (Backend, Frontend, and MLflow) using Docker Compose:
 ```bash
-python app.py
-# Running on http://0.0.0.0:8080
+docker-compose up --build
 ```
+> The React Frontend will be available at `http://localhost:3000`
+> The FastAPI Backend and Swagger Docs will be available at `http://localhost:8080/docs`
+> MLflow UI will be at `http://localhost:5000`
 
 ---
 
@@ -350,5 +354,5 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ---
 
 <p align="center">
-  Built with ❤️ — LightGBM · TF-IDF · Flask · DVC · MLflow · Docker · AWS · GitHub Actions
+  Built with ❤️ — LightGBM · TF-IDF · FastAPI · React · DVC · MLflow · Docker · AWS · GitHub Actions
 </p>
